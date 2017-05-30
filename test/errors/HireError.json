@@ -1,0 +1,17 @@
+{
+  "opts": {
+    "unknownError": {
+      "code": "HireUnknownError",
+      "description": "Unknown error. Please contact the API provider for more information.",
+      "status": 400
+    }
+  },
+  "notFound": {
+    "status": 404,
+    "description": "Hire not found."
+  },
+  "insufficientFunds": {
+    "status": 422,
+    "description": "Insufficient funds for create hire."
+  }
+}

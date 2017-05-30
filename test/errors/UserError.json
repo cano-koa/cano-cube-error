@@ -1,0 +1,17 @@
+{
+  "opts": {
+    "unknownError": {
+      "code": "UserUnknownError",
+      "description": "Unknown error. Please contact the API provider for more information.",
+      "status": 400
+    }
+  },
+  "notFound": {
+    "status": 404,
+    "description": "User not found."
+  },
+  "emailExist": {
+    "status": 400,
+    "description": "The email already exist in system."
+  }
+}
