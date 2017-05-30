@@ -1,6 +1,6 @@
 {
   "name": "proton-quark-error",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Load error defined and use them with proton microframework",
   "main": "index.js",
   "scripts": {
