@@ -1,0 +1,37 @@
+{
+  "name": "proton-quark-error",
+  "version": "1.0.0",
+  "description": "Load error defined and use them with proton microframework",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "./node_modules/mocha-co/bin/mocha -R spec ./test/quark.js"
+  },
+  "author": "Ernesto Rojas",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha-co": "1.17.1-co.1"
+  },
+  "dependencies": {
+    "chai": "^3.5.0",
+    "proton-quark": "^1.0.0",
+    "require-all": "^2.0.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ernestojr/proton-quark-error.git"
+  },
+  "keywords": [
+    "Proton",
+    "Microframework",
+    "Quark",
+    "Error"
+  ],
+  "bugs": {
+    "url": "https://github.com/ernestojr/proton-quark-error/issues"
+  },
+  "homepage": "https://github.com/ernestojr/proton-quark-error"
+}
