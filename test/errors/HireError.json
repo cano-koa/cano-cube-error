@@ -2,13 +2,12 @@
   "opts": {
     "unknownError": {
       "code": "HireUnknownError",
-      "description": "Unknown error. Please contact the API provider for more information.",
+      "description": "Please contact the API provider for more information.",
       "status": 400
     }
   },
   "notFound": {
-    "status": 404,
-    "description": "Hire not found."
+    "status": 404
   },
   "insufficientFunds": {
     "status": 422,
