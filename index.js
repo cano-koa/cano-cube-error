@@ -1,7 +1,7 @@
 const Quark = require('proton-quark')
 const fs = require('fs')
 const path = require('path')
-module.exports = class Error extends Quark {
+module.exports = class QuarkError extends Quark {
 
   constructor(proton) {
     super(proton)
@@ -37,9 +37,8 @@ module.exports = class Error extends Quark {
 
   _buildConstructor(typesErrors, opts) {
     const quarkCtx = this
-    return function (codeError, err) {
-      err = err || 'Message not specified.'
-      this._error = typeof err !== 'string' ? err :  new Error(err)
+    return function (codeError, err='Message not specified.') {
+      this._error = typeof err === 'string' ? new Error(err) : err
       const classCtx = this
       if (codeError !== 'unknownError') {
         for (let code in typesErrors) {
@@ -59,14 +58,10 @@ module.exports = class Error extends Quark {
 
   _buildProcessMethod(ClassError) {
     ClassError.process = function(ctx, err) {
-      if (err instanceof QuarkError) {
-        ctx.status = err.status
-        ctx.body = err.standarError
-      } else {
-        const newErr = new ClassError('unknownError', err)
-        ctx.status = newErr.status
-        ctx.body = newErr.standarError
-      }
+      if (!(err instanceof QuarkError))
+        err = new ClassError('unknownError', err)
+      ctx.status = err.status
+      ctx.body = err.standarError
     }
   }
 
@@ -97,10 +92,18 @@ module.exports = class Error extends Quark {
   _setDataError(ctx, data, userOpts={}) {
     Object.assign(ctx, this._getDefaultOpts().unknownError)
     if (userOpts.unknownError) {
-      const { code, description, status } = userOpts.unknownError
-      Object.assign(ctx, { code, description, status })
+      Object.assign(ctx, this._getAvailableFields(userOpts.unknownError))
     }
-    Object.assign(ctx, data)
+    Object.assign(ctx, this._getAvailableFields(data))
+  }
+
+  _getAvailableFields(data) {
+    const { code, description, status } = data
+    const result = {}
+    if (code) Object.assign(result, { code })
+    if (description) Object.assign(result, { description })
+    if (status) Object.assign(result, { status })
+    return result
   }
 
   get _files() {

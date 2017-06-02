@@ -34,10 +34,11 @@ describe('Quark test', () => {
 
   it('Should generate the incomplete (without description) defined error object for Hires', function() {
     try {
-      throw new HireError('notFound', 'user not Found in DB.')
+      throw new HireError('notFound', 'Hire not Found in DB.')
     } catch (err) {
       const ctx = {}
       UserError.process(ctx, err)
+      expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 404)
       expect(ctx.body).to.have.deep.property('code', 'notFound')
       expect(ctx.body).to.have.deep.property('description', 'Please contact the API provider for more information.')
@@ -59,10 +60,11 @@ describe('Quark test', () => {
 
   it('Should generate the complete defined error object for Users', function() {
     try {
-      throw new UserError('notFound', new Error('user not Found in DB.'))
+      throw new UserError('notFound', new Error('User not Found in DB.'))
     } catch (err) {
       const ctx = {}
       UserError.process(ctx, err)
+      expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 404)
       expect(ctx.body).to.have.deep.property('code', 'notFound')
       expect(ctx.body).to.have.deep.property('description', 'User not found.')
@@ -71,10 +73,11 @@ describe('Quark test', () => {
 
   it('Should generate the incomplete (without status) defined error object for Users', function() {
     try {
-      throw new UserError('emailExist', new Error('user not Found in DB.'))
+      throw new UserError('emailExist', new Error('The email sent exist in DB.'))
     } catch (err) {
       const ctx = {}
       UserError.process(ctx, err)
+      expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 500)
       expect(ctx.body).to.have.deep.property('code', 'emailExist')
       expect(ctx.body).to.have.deep.property('description', 'The email already exist in system.')
@@ -83,12 +86,12 @@ describe('Quark test', () => {
 
   it('Should generate an unknown error for Users', function() {
     try {
-      throw new Error('this is an unknown error with option show message active')
+      throw new Error('This is an unknown error with option show message active')
     } catch (err) {
       const ctx = {}
       UserError.process(ctx, err)
       expect(ctx).to.have.deep.property('body')
-      expect(ctx).to.have.deep.property('status', 400)
+      expect(ctx).to.have.deep.property('status', 500)
       expect(ctx.body).to.have.deep.property('code', 'UserUnknownError')
       expect(ctx.body).to.have.deep.property('description', 'Please contact the API provider for more information.')
     }
