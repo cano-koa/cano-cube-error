@@ -22,23 +22,27 @@ module.exports = class QuarkError extends Quark {
 
   _initializeExceptions() {
     const files = this._files
+    const { tasks } = files
+    delete files.tasks
     for (let fileName in files) {
       const typesErrors = files[fileName]
       const { opts } = typesErrors
-      const { className } = opts
+      const { className = fileName } = opts
+      const task = tasks[className]
       delete typesErrors.opts
-      const ClassError = this._buildConstructor(typesErrors, opts)
+      const ClassError = this._buildConstructor(typesErrors, opts, task)
       this._buildProcessMethod(ClassError)
       ClassError.prototype = new QuarkError()
       ClassError.prototype.constructor = ClassError
-      global[className || fileName] = ClassError
+      global[className] = ClassError
     }
   }
 
-  _buildConstructor(typesErrors, opts) {
+  _buildConstructor(typesErrors, opts, task) {
     const quarkCtx = this
     return function (codeError, err='Message not specified.') {
       this._error = typeof err === 'string' ? new Error(err) : err
+      if (task) this.task = task.bind(this)
       const classCtx = this
       if (codeError !== 'unknownError') {
         for (let code in typesErrors) {
@@ -62,6 +66,7 @@ module.exports = class QuarkError extends Quark {
         err = new ClassError('unknownError', err)
       ctx.status = err.status
       ctx.body = err.standarError
+      if (err.task) err.task(ctx.request)
     }
   }
 

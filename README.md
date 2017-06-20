@@ -54,7 +54,7 @@ To generate a new error, you must only create a new object of some of the classe
 ```javascript
 throw new UserError('notFound', 'This is native error.')
 ```
-
+#### The method process
 Also each class contains a static method called `process` that receives by parameter the context of the request and the error. This allows you to configure the response of the request for a defined or unknown error.
 
 ```javascript
@@ -73,5 +73,22 @@ The process method responds to the request with the status defined according to 
     "code": "notFound"
 }
 ```
+
+#### Tasks
+The tasks will be defined in a function object in a file named `tasks.js` located in the `errors` folder. The names of the functions must be equal to the name of the error class to which it corresponds. The only parameter of these functions will always be an object with the body, the params and the query of the http request. The functions will keep the context of the class error. See the following example.
+
+```javascript
+module.exports = {
+    UserError: function ({ body, params, query }) {
+        console.error(`UserError
+            Body ${JSON.stringify(body)}
+            Params ${JSON.stringify(params)}
+            Query ${JSON.stringify(query)}
+            Error ${JSON.stringify(this.standarError)}`)
+    }
+}
+```
+
+The tasks will be called at the end of the execution of the `process` method.
 
 More information in the test.
