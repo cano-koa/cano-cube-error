@@ -23,7 +23,13 @@ describe('Quark test', () => {
     try {
       throw new HireError('insufficientFunds', 'Insufficient Funds')
     } catch (err) {
-      const ctx = {}
+      const ctx = {
+        request: {
+          body: { contains: 'This is body.' },
+          params: { contains: 'This is the params.' },
+          query: { contains: 'This is query.' }
+        }
+      }
       HireError.process(ctx, err)
       expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 422)
@@ -36,7 +42,13 @@ describe('Quark test', () => {
     try {
       throw new HireError('notFound', 'Hire not Found in DB.')
     } catch (err) {
-      const ctx = {}
+      const ctx = {
+        request: {
+          body: { contains: 'This is body.' },
+          params: { contains: 'This is the params.' },
+          query: { contains: 'This is query.' }
+        }
+      }
       UserError.process(ctx, err)
       expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 404)
@@ -49,7 +61,13 @@ describe('Quark test', () => {
     try {
       throw new Error('this is an unknown error with option show message active')
     } catch (err) {
-      const ctx = {}
+      const ctx = {
+        request: {
+          body: { contains: 'This is body.' },
+          params: { contains: 'This is the params.' },
+          query: { contains: 'This is query.' }
+        }
+      }
       HireError.process(ctx, err)
       expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 400)
@@ -62,7 +80,13 @@ describe('Quark test', () => {
     try {
       throw new UserError('notFound', new Error('User not Found in DB.'))
     } catch (err) {
-      const ctx = {}
+      const ctx = {
+        request: {
+          body: { contains: 'This is body.' },
+          params: { contains: 'This is the params.' },
+          query: { contains: 'This is query.' }
+        }
+      }
       UserError.process(ctx, err)
       expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 404)
@@ -75,7 +99,13 @@ describe('Quark test', () => {
     try {
       throw new UserError('emailExist', new Error('The email sent exist in DB.'))
     } catch (err) {
-      const ctx = {}
+      const ctx = {
+        request: {
+          body: { contains: 'This is body.' },
+          params: { contains: 'This is the params.' },
+          query: { contains: 'This is query.' }
+        }
+      }
       UserError.process(ctx, err)
       expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 500)
@@ -88,7 +118,13 @@ describe('Quark test', () => {
     try {
       throw new Error('This is an unknown error with option show message active')
     } catch (err) {
-      const ctx = {}
+      const ctx = {
+        request: {
+          body: { contains: 'This is body.' },
+          params: { contains: 'This is the params.' },
+          query: { contains: 'This is query.' }
+        }
+      }
       UserError.process(ctx, err)
       expect(ctx).to.have.deep.property('body')
       expect(ctx).to.have.deep.property('status', 500)
