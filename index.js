@@ -76,7 +76,7 @@ module.exports = class QuarkError extends Quark {
         err = new ClassError('unknownError', err)
       ctx.status = err.status
       ctx.body = err.standarError
-      if (err.task) err.task(ctx.request)
+      if (err.task) err.task(ctx)
     }
   }
 
