@@ -122,8 +122,8 @@ const defaultOpts = {
   unknownError: {
     code: "unknownError",
     description: "Please contact the API provider for more information.",
-    status: 400
-  }
+    status: 400,
+  },
 };
 
 module.exports = CubeError;
