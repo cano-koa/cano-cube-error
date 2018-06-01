@@ -1,5 +1,5 @@
-# proton-quark-error
-Build clases for handling errors defined in a JSON file for the [proton-koa](https://github.com/nucleos-io/proton-koa) microframework.
+# cano-cube-error
+Build clases for handling errors defined in a JSON file for the [cano-koa](https://github.com/cano-koa/cano-koa) microframework.
 This is the json structure that represents the error group for users:
 
 ```json
