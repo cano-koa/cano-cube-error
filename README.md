@@ -1,5 +1,5 @@
-# proton-quark-error
-Build clases for handling errors defined in a JSON file for the [proton-koa](https://github.com/nucleos-io/proton-koa) microframework.
+# cano-cube-error
+Build clases for handling errors defined in a JSON file for the [cano-koa](https://github.com/cano-koa/cano-koa) microframework.
 This is the json structure that represents the error group for users:
 
 ```json
@@ -73,22 +73,5 @@ The process method responds to the request with the status defined according to 
     "code": "notFound"
 }
 ```
-
-#### Tasks
-The tasks will be defined in a function object in a file named `tasks.js` located in the `errors` folder. The names of the functions must be equal to the name of the error class to which it corresponds. The only parameter of these functions will always be an object with the body, the params and the query of the http request. The functions will keep the context of the class error. See the following example.
-
-```javascript
-module.exports = {
-    UserError: function ({ body, params, query }) {
-        console.error(`UserError
-            Body ${JSON.stringify(body)}
-            Params ${JSON.stringify(params)}
-            Query ${JSON.stringify(query)}
-            Error ${JSON.stringify(this.standarError)}`)
-    }
-}
-```
-
-The tasks will be called at the end of the execution of the `process` method.
 
 More information in the test.
