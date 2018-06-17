@@ -1,4 +1,4 @@
-# cano-cube-error
+# Cube Error for Cano Koa
 Build clases for handling errors defined in a JSON file for the [cano-koa](https://github.com/cano-koa/cano-koa) microframework.
 This is the json structure that represents the error group for users:
 
@@ -8,7 +8,7 @@ This is the json structure that represents the error group for users:
     "unknownError": {
       "code": "UserUnknownError",
       "description": "Unknown error. Please contact the API provider for more information.",
-      "status": 400
+      "status": 500
     },
     "className":"UserError"
   },
@@ -29,7 +29,7 @@ The first level of the object represents the possible errors (code error), excep
 {
   "code": "UnknownError",
   "description": "Unknown error. Please contact the API provider for more information.",
-  "status": 400
+  "status": 500
 }
 ```
 
@@ -52,25 +52,59 @@ Each built class is inserted as global. The classes will have as name, the name 
 To generate a new error, you must only create a new object of some of the classes and pass by parameter the error code and the native error (error object or string) that occurred:
 
 ```javascript
-throw new UserError('notFound', 'This is native error.')
+throw new UserError('emailExist', 'This is native error.');
 ```
-#### The method process
-Also each class contains a static method called `process` that receives by parameter the context of the request and the error. This allows you to configure the response of the request for a defined or unknown error.
-
+or
 ```javascript
 try {
-    throw new UserError('notFound', new Error('this is native error.'))
+    ...
 } catch (err) {
-    UserError.process(req, err)
+    throw new UserError('emailExist', err);
+}
+```
+#### Resulting object
+
+```javascript
+{
+    original: [Error],
+    content: {
+        code: 'emailExist',
+        description: 'The email already exist in system.'
+    },
+    fullContent: {
+        code: 'emailExist',
+        description: 'The email already exist in system.',
+        message: 'This is native error.'
+    },
+    status: 400
 }
 ```
 
-The process method responds to the request with the status defined according to the type of error and as body an object with the fields `description` and `code` defined.
+#### The method handler
+This static method allows you to transform errors (not defined in the errors folder) of the Javascript Error class and convert them to an unknown CanoError error.
 
-```json
-{
-    "description": "User not found.",
-    "code": "notFound"
+```javascript
+try {
+    throw new Error('this is an error.');
+} catch (err) {
+    UserError.handler(err);
+}
+```
+
+This method configures an error object of unknown type, based on the options defined in the json file of the class in question called by the method.
+
+The CanoError base class configures the object of unknown type with the default values of the cube. This can be avoided by passing an options object as a second parameter. The options follow the same structure of the unknownError field of the json files.
+
+```javascript
+try {
+    throw new Error('this is an error.');
+} catch (err) {
+    const opts = {
+        "code": "MyUknownError",
+        "description": "Unknown error.",
+        "status": 500
+    };
+    CanoError.handler(err, opts);
 }
 ```
 
