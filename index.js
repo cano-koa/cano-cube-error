@@ -27,7 +27,6 @@ class CubeError extends Cube {
 	 */
   prepare() {
     return new Promise((resolve) => {
-      const CanoError = function() {};
       global['CanoError'] = CanoError;
       resolve();
 		});
@@ -42,9 +41,9 @@ class CubeError extends Cube {
         const opts = buildOpts(typesErrors);
         const { className = fileName } = opts;
         const ClassError = buildConstructor(typesErrors, opts);
-        ClassError.prototype = new CanoError();
+        ClassError.prototype = Object.create(CanoError.prototype);
         ClassError.prototype.constructor = ClassError;
-        buildProcessMethod(ClassError);
+        buildHandlerMethod(ClassError);
         global[className] = ClassError;
       }
       resolve();
@@ -52,6 +51,32 @@ class CubeError extends Cube {
   }
 
 }
+
+function CanoError(err = 'An error has occurred.', opts = {}) {
+  this.original = typeof err === 'string' ? new Error(err) : err;
+  opts = merge({}, defaultOpts.unknownError, opts);
+  const { description, status, code } = opts;
+  this.content = {
+    code,
+    description,
+  };
+  this.fullContent = {
+    code,
+    description,
+    message: this.original.message,
+  };
+  this.status = status;
+}
+
+Object.defineProperty(CanoError, 'handler', {
+  value: function (err, opts = {}) {
+    if (!(err instanceof CanoError)) {
+      err = new CanoError(err, opts);
+    }
+    return err;
+  },
+  enumerable: false,
+});
 
 function getFiles(_path) {
   const files = path.join(_path, '/errors');
@@ -64,65 +89,42 @@ function buildOpts(data) {
   return opts;
 }
 
-function getAvailableFields(data) {
-  const { code, description, status } = data;
-  const result = {};
-  if (code) Object.assign(result, { code });
-  if (description) Object.assign(result, { description });
-  if (status) Object.assign(result, { status });
-  return result;
-}
-
-function setDataError(ctx, data, userOpts = {}) {
-  merge(ctx, defaultOpts.unknownError, userOpts.unknownError || {}, data);
-}
-
-function setAtUnknownError(ctx, opts={}) {
-  setDataError(ctx, {}, opts);
-}
-
-function buildSetterAndGetter(ctx) {
-  Object.defineProperty(ctx, 'standarError', { get: function() {
-    return { description: ctx.description, code: ctx.code }
-  }});
-  Object.defineProperty(ctx, 'fullError', { get: function() {
-    const { message } = ctx._error
-    return Object.assign(ctx.standarError, { message })
-  }});
-}
-
-function buildConstructor(typesErrors, opts) {
-  return function (codeError, err = 'An error has occurred.') {
-    this._error = typeof err === 'string' ? new Error(err) : err;
-    if (codeError !== 'unknownError') {
-      const result = find(typesErrors, (value , name) => name === codeError);
+function buildConstructor(typesErrors, userOpts) {
+  return function (code, err) {
+    let opts = {};
+    const { unknownError = {} } = userOpts;
+    if (code !== 'unknownError') {
+      const result = find(typesErrors, (value , name) => name === code);
       if (result) {
         const { description, status } = result;
-        setDataError(this, { description, status, code: codeError }, opts);
+        merge(opts, unknownError, { description, status, code })
+      } else {
+        merge(opts, unknownError);
       }
+    } else {
+      merge(opts, unknownError);
     }
-    if (!this.code) {
-      setAtUnknownError(this, opts);
-    }
-    buildSetterAndGetter(this);
+    CanoError.call(this, err, opts);
   }
 }
 
-function buildProcessMethod(ClassError) {
-  ClassError.process = function(ctx, err) {
-    if (!(err instanceof CanoError)) {
-      err = new ClassError('unknownError', err);
-    }
-    ctx.status = err.status;
-    ctx.body = err.standarError;
-  };
+function buildHandlerMethod(ClassError) {
+  Object.defineProperty(ClassError, 'handler', {
+    value: function (err) {
+      if (!(err instanceof CanoError)) {
+        err = new ClassError('unknownError', err);
+      }
+      return err;
+    },
+    enumerable: false,
+  });
 }
 
 const defaultOpts = {
   unknownError: {
     code: "unknownError",
     description: "Please contact the API provider for more information.",
-    status: 400,
+    status: 500,
   },
 };
 

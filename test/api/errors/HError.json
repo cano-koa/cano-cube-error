@@ -4,7 +4,8 @@
       "code": "HireUnknownError",
       "description": "Please contact the API provider for more information.",
       "status": 400
-    }
+    },
+    "className": "HireError"
   },
   "notFound": {
     "status": 404
