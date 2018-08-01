@@ -1,6 +1,6 @@
 {
   "name": "cano-cube-error",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Load error defined and use them with cano-koa microframework",
   "main": "index.js",
   "scripts": {
