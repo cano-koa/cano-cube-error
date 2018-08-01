@@ -21,6 +21,7 @@ describe('Cube test', () => {
       throw new HireError('insufficientFunds', 'Insufficient Funds');
     } catch (err) {
       expect(err).to.have.property('content');
+      expect(err).to.have.property('message');
       expect(err.content).to.have.property('code', 'insufficientFunds');
       expect(err.content).to.have.property('description');
       expect(err).to.have.property('original');
@@ -34,11 +35,14 @@ describe('Cube test', () => {
 
   it('Should generate the incomplete (without description) defined error object for Hires', function() {
     try {
-      throw new HireError('notFound', 'Hire not Found in DB.');
+      throw new HireError('notFound', 'Hire not Found in DB.', { hire: '123456789' });
     } catch (err) {
       expect(err).to.have.property('content');
+      expect(err).to.have.property('message');
       expect(err.content).to.have.property('code', 'notFound');
       expect(err.content).to.have.property('description', 'Please contact the API provider for more information.');
+      expect(err.content).to.have.property('data');
+      expect(err.content.data).to.have.property('hire', '123456789');
       expect(err).to.have.property('original');
       expect(err).to.have.property('fullContent');
       expect(err.fullContent).to.have.property('code', 'notFound');
@@ -54,6 +58,7 @@ describe('Cube test', () => {
     } catch (err) {
       err = HireError.handler(err);
       expect(err).to.have.property('content');
+      expect(err).to.have.property('message');
       expect(err.content).to.have.property('code', 'HireUnknownError');
       expect(err.content).to.have.property('description', 'Please contact the API provider for more information.');
       expect(err).to.have.property('original');
@@ -70,6 +75,7 @@ describe('Cube test', () => {
       throw new UserError('notFound', new Error('User not Found in DB.'));
     } catch (err) {
       expect(err).to.have.property('content');
+      expect(err).to.have.property('message');
       expect(err.content).to.have.property('code', 'notFound');
       expect(err.content).to.have.property('description', 'User not found.');
       expect(err).to.have.property('original');
@@ -86,6 +92,7 @@ describe('Cube test', () => {
       throw new UserError('emailExist', new Error('The email sent exist in DB.'));
     } catch (err) {
       expect(err).to.have.property('content');
+      expect(err).to.have.property('message');
       expect(err.content).to.have.property('code', 'emailExist');
       expect(err.content).to.have.property('description', 'The email already exist in system.');
       expect(err).to.have.property('original');
@@ -103,6 +110,7 @@ describe('Cube test', () => {
     } catch (err) {
       err = UserError.handler(err);
       expect(err).to.have.property('content');
+      expect(err).to.have.property('message');
       expect(err.content).to.have.property('code', 'UserUnknownError');
       expect(err.content).to.have.property('description', 'Please contact the API provider for more information.');
       expect(err).to.have.property('original');
@@ -120,6 +128,7 @@ describe('Cube test', () => {
     } catch (err) {
       err = CanoError.handler(err);
       expect(err).to.have.property('content');
+      expect(err).to.have.property('message');
       expect(err.content).to.have.property('code', 'unknownError');
       expect(err.content).to.have.property('description', 'Please contact the API provider for more information.');
       expect(err).to.have.property('original');

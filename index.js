@@ -55,7 +55,7 @@ class CubeError extends Cube {
 function CanoError(err = 'An error has occurred.', opts = {}) {
   this.original = typeof err === 'string' ? new Error(err) : err;
   opts = merge({}, defaultOpts.unknownError, opts);
-  const { description, status, code } = opts;
+  const { description, status, code, data } = opts;
   this.content = {
     code,
     description,
@@ -66,6 +66,11 @@ function CanoError(err = 'An error has occurred.', opts = {}) {
     message: this.original.message,
   };
   this.status = status;
+  this.message = this.original.message;
+  if (data) {
+    this.content.data = data;
+    this.fullContent.data = data;
+  }
 }
 
 Object.defineProperty(CanoError, 'handler', {
@@ -90,7 +95,7 @@ function buildOpts(data) {
 }
 
 function buildConstructor(typesErrors, userOpts) {
-  return function (code, err) {
+  return function (code, err, data) {
     let opts = {};
     const { unknownError = {} } = userOpts;
     if (code !== 'unknownError') {
@@ -103,6 +108,9 @@ function buildConstructor(typesErrors, userOpts) {
       }
     } else {
       merge(opts, unknownError);
+    }
+    if (data) {
+      merge(opts, { data });
     }
     CanoError.call(this, err, opts);
   }
